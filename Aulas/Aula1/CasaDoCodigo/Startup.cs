@@ -27,11 +27,9 @@ namespace CasaDoCodigo
 
             var connectionString = Configuration.GetConnectionString("Default");
 
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(connectionString)
-            );
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString));
 
-            //Registrando um novo serviço no controlador de injeção de dependência
+            //Registrando novos serviços no controlador de injeção de dependência
             services.AddTransient<IDataService, DataService>();
             services.AddTransient<IProdutoRepository, ProdutoRepository>();
         }

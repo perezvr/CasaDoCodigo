@@ -11,6 +11,10 @@ namespace CasaDoCodigo.Controllers
     {
         private readonly IProdutoRepository produtoRepository;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="produtoRepository">Obejto passado pelo controlador de injeção de dependência</param>
         public PedidoController(IProdutoRepository produtoRepository)
         {
             this.produtoRepository = produtoRepository;

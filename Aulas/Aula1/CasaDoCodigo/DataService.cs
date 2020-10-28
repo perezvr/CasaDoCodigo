@@ -15,6 +15,11 @@ namespace CasaDoCodigo
 
             private readonly IProdutoRepository produtoRepository;
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="contexto">Obejto passado pelo controlador de injeção de dependência</param>
+            /// <param name="produtoRepository">Obejto passado pelo controlador de injeção de dependência</param>
             public DataService(ApplicationContext contexto, IProdutoRepository produtoRepository)
             {
                 this.contexto = contexto;

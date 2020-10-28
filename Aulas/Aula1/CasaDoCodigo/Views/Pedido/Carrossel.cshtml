@@ -6,6 +6,7 @@
 	<!-- Wrapper for slides -->
 	<div class="carousel-inner" role="listbox">
 		@{ const int TAMANHO_PAGINA = 4;
+			/*Para utlizar o modelo utilizamos Model em maiúsculo*/
 			int paginas = (int)Math.Ceiling((double)Model.Count() / TAMANHO_PAGINA); }
 
 		@for (int pagina = 0; pagina < paginas; pagina++)
