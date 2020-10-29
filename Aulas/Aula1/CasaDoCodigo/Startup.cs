@@ -25,6 +25,17 @@ namespace CasaDoCodigo
         {
             services.AddMvc();
 
+            /*
+             * Session é uma técnica utilizada para manter estados entre as views controlada pelo servidor
+             * Ex.: Manter o id do pedido ao longo da navegação
+             * **/
+            services.AddSession();
+
+            /*
+             * Precisamos do serviço de cache para manter os dados na memória ao longo da navegação
+             * **/
+            services.AddDistributedMemoryCache();
+
             var connectionString = Configuration.GetConnectionString("Default");
 
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connectionString));
@@ -53,11 +64,14 @@ namespace CasaDoCodigo
 
             app.UseStaticFiles();
 
+            app.UseSession();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Pedido}/{action=Carrossel}/{id?}");
+                    //Passando o codigo ao invés do id o parâmetro passado pelo tag helper asp-route-codigo vira um Path Parameter ao invés de Query Parameter
+                    template: "{controller=Pedido}/{action=Carrossel}/{codigo?}");
             });
 
             serviceProvider.GetService<IDataService>().InicializaDB();

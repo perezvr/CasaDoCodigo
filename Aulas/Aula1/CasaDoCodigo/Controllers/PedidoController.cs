@@ -1,4 +1,5 @@
-﻿using CasaDoCodigo.Repositories;
+﻿using CasaDoCodigo.Models;
+using CasaDoCodigo.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,16 @@ namespace CasaDoCodigo.Controllers
     public class PedidoController : Controller
     {
         private readonly IProdutoRepository produtoRepository;
+        private readonly IPedidoRepository pedidoRepository;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="produtoRepository">Obejto passado pelo controlador de injeção de dependência</param>
-        public PedidoController(IProdutoRepository produtoRepository)
+        public PedidoController(IProdutoRepository produtoRepository, IPedidoRepository pedidoRepository)
         {
             this.produtoRepository = produtoRepository;
+            this.pedidoRepository = pedidoRepository;
         }
 
         public IActionResult Carrossel()
@@ -25,9 +28,16 @@ namespace CasaDoCodigo.Controllers
             return View(produtoRepository.GetProdutos());
         }
 
-        public IActionResult Carrinho()
+        public IActionResult Carrinho(string codigo)
         {
-            return View();
+            if (!string.IsNullOrEmpty(codigo))
+            {
+                pedidoRepository.AddItem(codigo);
+            }
+
+            Pedido pedido = pedidoRepository.GetPedido();
+            //Passado a lista de objetos para a view de carrinho
+            return View(pedido.Itens);
         }
 
         public IActionResult Cadastro()
