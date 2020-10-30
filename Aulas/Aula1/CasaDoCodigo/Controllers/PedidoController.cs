@@ -43,11 +43,12 @@ namespace CasaDoCodigo.Controllers
         public IActionResult Cadastro()
         {
             return View();
+            
         }
 
         public IActionResult Resumo()
         {
-            return View();
+            return View(pedidoRepository.GetPedido());
         }
     }
 }
