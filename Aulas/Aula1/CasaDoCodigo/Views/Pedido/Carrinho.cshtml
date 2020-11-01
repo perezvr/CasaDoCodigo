@@ -25,35 +25,35 @@
 	<div class="panel-body">
 		@foreach (var item in Model)
 		{
-			<div class="row row-center linha-produto">
-				<div class="col-md-3">
-					<img class="img-produto-carrinho" src="/images/produtos/large_@(item.Produto.Codigo).jpg" />
-				</div>
-				<div class="col-md-3">@(item.Produto.Nome)</div>
-				<div class="col-md-2 text-center">@(item.PrecoUnitario)</div>
-				<div class="col-md-2 text-center">
-					<div class="input-group">
-						<span class="input-group-btn">
-							<button class="btn btn-default">
-								<span class="glyphicon-minus"></span>
-							</button>
-						</span>
-						<input type="text" value="@(item.Quantidade)"
-							   class="form-control text-center" />
-						<span class="input-group-btn">
-							<button class="btn btn-default">
-								<span class="glyphicon-plus"></span>
-							</button>
-						</span>
-					</div>
-				</div>
-				<div class="col-md-2">
-					R$ <span class="pull-right" subtotal>
-						@(item.SubTotal)
-					</span>
-				</div>
-			</div>
-		}
+<div class="row row-center linha-produto" item-id="@(item.Id)">
+	<div class="col-md-3">
+		<img class="img-produto-carrinho" src="/images/produtos/large_@(item.Produto.Codigo).jpg" />
+	</div>
+	<div class="col-md-3">@(item.Produto.Nome)</div>
+	<div class="col-md-2 text-center"> R$ @(item.PrecoUnitario)</div>
+	<div class="col-md-2 text-center">
+		<div class="input-group">
+			<span class="input-group-btn">
+				<button class="btn btn-default">
+					<span class="glyphicon-minus"></span>
+				</button>
+			</span>
+			<input type="text" value="@(item.Quantidade)"
+				   class="form-control text-center" />
+			<span class="input-group-btn">
+				<button class="btn btn-default"
+						onclick="clickIncremento(this)">
+					<span class="glyphicon-plus"></span>
+				</button>
+			</span>
+		</div>
+	</div>
+	<div class="col-md-2">
+		R$ <span class="pull-right" subtotal>
+			@(item.SubTotal)
+		</span>
+	</div>
+</div>}
 	</div>
 	<div class="panel-footer">
 		<div class="row">
@@ -84,3 +84,29 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts{
+	<script type="text/javascript">
+		function clickIncremento(btn) {
+			//Pegando o parent do btn que possui a informação do item-id
+			var linhaDoItem = $(btn).parents('[item-id]');
+			var itemId = $(linhaDoItem).attr('item-id');
+			var novaQtde = $(linhaDoItem).find('input').val();
+
+			var data = {
+				id: itemId,
+				Quantidade: novaQtde
+			};
+
+			$.ajax({
+				url: '/pedido/updatequantidade',
+				type: 'POST',
+				contentType: 'application/json',
+				data: JSON.stringify(data)
+			})
+
+			debugger;
+		}
+	</script>
+}
+

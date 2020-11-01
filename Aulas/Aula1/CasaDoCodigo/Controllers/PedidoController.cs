@@ -1,10 +1,6 @@
 ﻿using CasaDoCodigo.Models;
 using CasaDoCodigo.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CasaDoCodigo.Controllers
 {
@@ -31,9 +27,7 @@ namespace CasaDoCodigo.Controllers
         public IActionResult Carrinho(string codigo)
         {
             if (!string.IsNullOrEmpty(codigo))
-            {
                 pedidoRepository.AddItem(codigo);
-            }
 
             Pedido pedido = pedidoRepository.GetPedido();
             //Passado a lista de objetos para a view de carrinho
@@ -43,12 +37,17 @@ namespace CasaDoCodigo.Controllers
         public IActionResult Cadastro()
         {
             return View();
-            
         }
 
         public IActionResult Resumo()
         {
             return View(pedidoRepository.GetPedido());
+        }
+
+        [HttpPost]
+        public void UpdateQuantidade([FromBody] ItemPedido itemPedido)
+        {
+
         }
     }
 }
