@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace CasaDoCodigo.Models
@@ -34,5 +35,7 @@ namespace CasaDoCodigo.Models
             Quantidade = quantidade;
             PrecoUnitario = precoUnitario;
         }
+
+        internal void AtualizaQuantidade(int quantidade) => Quantidade = quantidade;
     }
 }

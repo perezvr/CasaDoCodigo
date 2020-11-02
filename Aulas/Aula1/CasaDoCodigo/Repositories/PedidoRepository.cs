@@ -1,4 +1,5 @@
 ﻿using CasaDoCodigo.Models;
+using CasaDoCodigo.Models.VIewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +13,7 @@ namespace CasaDoCodigo.Repositories
     {
         Pedido GetPedido();
         void AddItem(string codigo);
+        UpdateQuantidadeResponse UpdateQuantidade(ItemPedido itemPedido);
     }
 
     public class PedidoRepository : BaseRepository<Pedido>, IPedidoRepository
@@ -20,15 +22,17 @@ namespace CasaDoCodigo.Repositories
          * Esse componente é responsável por acessar o objeto da sessão
          * **/
         private readonly IHttpContextAccessor contextAccessor;
-
+        private readonly IItemPedidoRepository itemPedidoRepository;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="contexto"></param>
         /// <param name="contextAccessor">Está registrado automaticamente e está sendo passado por injeção de dependência</param>
-        public PedidoRepository(ApplicationContext contexto, IHttpContextAccessor contextAccessor) : base(contexto)
+        public PedidoRepository(ApplicationContext contexto, IHttpContextAccessor contextAccessor, IItemPedidoRepository itemPedidoRepository) : base(contexto)
         {
             this.contextAccessor = contextAccessor;
+            this.itemPedidoRepository = itemPedidoRepository;
+
         }
 
         public void AddItem(string codigo)
@@ -86,6 +90,23 @@ namespace CasaDoCodigo.Repositories
         private void SetPedidoId(int pedidoId)
         {
             contextAccessor.HttpContext.Session.SetInt32("pedidoId", pedidoId);
+        }
+
+        public UpdateQuantidadeResponse UpdateQuantidade(ItemPedido itemPedido)
+        {
+            var itemPedidoDB = itemPedidoRepository.GetItemPedido(itemPedido.Id);
+
+            if (itemPedidoDB != null)
+            {
+                itemPedidoDB.AtualizaQuantidade(itemPedido.Quantidade);
+                contexto.SaveChanges();
+
+                CarrinhoViewModel carrinhoViewModel = new CarrinhoViewModel(GetPedido().Itens);
+
+                return new UpdateQuantidadeResponse(itemPedidoDB, carrinhoViewModel);
+            }
+
+            throw new ArgumentException("ItemPedido não encontrado");
         }
     }
 }

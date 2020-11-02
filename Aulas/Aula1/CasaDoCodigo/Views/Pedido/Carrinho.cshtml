@@ -1,5 +1,6 @@
 ﻿@{ ViewData["Title"] = "Carrinho"; }
-@model IList<ItemPedido>;
+@model CarrinhoViewModel;
+
 
 <h3>Meu Carrinho</h3>
 
@@ -23,7 +24,7 @@
 		</div>
 	</div>
 	<div class="panel-body">
-		@foreach (var item in Model)
+		@foreach (var item in Model.Items)
 		{
 <div class="row row-center linha-produto" item-id="@(item.Id)">
 	<div class="col-md-3">
@@ -34,15 +35,17 @@
 	<div class="col-md-2 text-center">
 		<div class="input-group">
 			<span class="input-group-btn">
-				<button class="btn btn-default">
+				<button class="btn btn-default"
+						onclick="carrinho.clickDecremento(this)">
 					<span class="glyphicon-minus"></span>
 				</button>
 			</span>
 			<input type="text" value="@(item.Quantidade)"
-				   class="form-control text-center" />
+				   class="form-control text-center"
+				   onblur="carrinho.updateQuantidade(this)"/>
 			<span class="input-group-btn">
 				<button class="btn btn-default"
-						onclick="clickIncremento(this)">
+						onclick="carrinho.clickIncremento(this)">
 					<span class="glyphicon-plus"></span>
 				</button>
 			</span>
@@ -59,13 +62,13 @@
 		<div class="row">
 			<div class="col-md-10">
 				<span numero-itens>
-					@(Model.Count)
+					@(Model.Items.Count())
 					itens
 				</span>
 			</div>
 			<div class="col-md-2">
 				Total: R$ <span class="pull-right" total>
-					@(Model.Sum(i => i.SubTotal))
+					@(Model.Total)
 				</span>
 			</div>
 		</div>
@@ -76,7 +79,7 @@
 	<div class="col-md-12">
 		<div class="pull-right">
 			<a class="btn btn-success" asp-action="carrossel">
-				Adicionar Produtos
+				Adicionar Produtos+
 			</a>
 			<a class="btn btn-success" asp-action="resumo">
 				Finalizar Pedido
@@ -86,27 +89,8 @@
 </div>
 
 @section Scripts{
-	<script type="text/javascript">
-		function clickIncremento(btn) {
-			//Pegando o parent do btn que possui a informação do item-id
-			var linhaDoItem = $(btn).parents('[item-id]');
-			var itemId = $(linhaDoItem).attr('item-id');
-			var novaQtde = $(linhaDoItem).find('input').val();
-
-			var data = {
-				id: itemId,
-				Quantidade: novaQtde
-			};
-
-			$.ajax({
-				url: '/pedido/updatequantidade',
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(data)
-			})
-
-			debugger;
-		}
+	<script src="/js/carrinho.js">
+	
 	</script>
 }
 

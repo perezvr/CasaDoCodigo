@@ -1,6 +1,8 @@
 ﻿using CasaDoCodigo.Models;
+using CasaDoCodigo.Models.VIewModels;
 using CasaDoCodigo.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace CasaDoCodigo.Controllers
 {
@@ -8,15 +10,17 @@ namespace CasaDoCodigo.Controllers
     {
         private readonly IProdutoRepository produtoRepository;
         private readonly IPedidoRepository pedidoRepository;
+        private readonly IItemPedidoRepository itemPedidoRepository;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="produtoRepository">Obejto passado pelo controlador de injeção de dependência</param>
-        public PedidoController(IProdutoRepository produtoRepository, IPedidoRepository pedidoRepository)
+        public PedidoController(IProdutoRepository produtoRepository, IPedidoRepository pedidoRepository, IItemPedidoRepository itemPedidoRepository)
         {
             this.produtoRepository = produtoRepository;
             this.pedidoRepository = pedidoRepository;
+            this.itemPedidoRepository = itemPedidoRepository;
         }
 
         public IActionResult Carrossel()
@@ -31,7 +35,9 @@ namespace CasaDoCodigo.Controllers
 
             Pedido pedido = pedidoRepository.GetPedido();
             //Passado a lista de objetos para a view de carrinho
-            return View(pedido.Itens);
+            List<ItemPedido> itens = pedido.Itens;
+            CarrinhoViewModel carrinhoViewModel = new CarrinhoViewModel(itens);
+            return base.View(carrinhoViewModel);
         }
 
         public IActionResult Cadastro()
@@ -45,9 +51,9 @@ namespace CasaDoCodigo.Controllers
         }
 
         [HttpPost]
-        public void UpdateQuantidade([FromBody] ItemPedido itemPedido)
+        public UpdateQuantidadeResponse UpdateQuantidade([FromBody] ItemPedido itemPedido)
         {
-
+            return pedidoRepository.UpdateQuantidade(itemPedido);
         }
     }
 }
