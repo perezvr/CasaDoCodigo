@@ -4,6 +4,10 @@
 
 <h3>Meu Carrinho</h3>
 
+<!--Criando o form somente para que ele possa passar o token de validação para o servidor-->
+<form method="post" asp-action="carrinho">
+</form>
+
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<div class="row">
@@ -42,7 +46,7 @@
 			</span>
 			<input type="text" value="@(item.Quantidade)"
 				   class="form-control text-center"
-				   onblur="carrinho.updateQuantidade(this)"/>
+				   onblur="carrinho.updateQuantidade(this)" />
 			<span class="input-group-btn">
 				<button class="btn btn-default"
 						onclick="carrinho.clickIncremento(this)">
@@ -89,7 +93,7 @@
 
 @section Scripts{
 	<script src="/js/carrinho.js">
-	
+
 	</script>
 }
 

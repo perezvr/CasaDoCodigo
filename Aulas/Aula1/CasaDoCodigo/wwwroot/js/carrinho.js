@@ -1,13 +1,13 @@
 ﻿
 class Carrinho {
-	clickIncremento(btn) {
-		let data = this.getData(btn);
+	clickIncremento(button) {
+		let data = this.getData(button);
 		data.Quantidade++;
 		this.postQuantidade(data);
 	}
 
-	clickDecremento(btn) {
-		let data = this.getData(btn);
+	clickDecremento(button) {
+		let data = this.getData(button);
 		data.Quantidade--;
 		this.postQuantidade(data);
 	}
@@ -21,20 +21,27 @@ class Carrinho {
 		//Pegando o parent do btn que possui a informação do item-id
 		var linhaDoItem = $(elemento).parents('[item-id]');
 		var itemId = $(linhaDoItem).attr('item-id');
-		var novaQtde = $(linhaDoItem).find('input').val();
+		var novaQuantidade = $(linhaDoItem).find('input').val();
 
 		return {
 			id: itemId,
-			Quantidade: novaQtde
+			Quantidade: novaQuantidade
 		};
 	}
 
 	postQuantidade(data) {
+
+		//Criando um objeto de cabeçalho para enviar o token para o servidor
+		let token = $('[name=__RequestVerificationToken]').val();
+		let headers = {};
+		headers['RequestVerificationToken'] = token;
+
 		$.ajax({
 			url: '/pedido/updatequantidade',
 			type: 'POST',
 			contentType: 'application/json',
-			data: JSON.stringify(data)
+			data: JSON.stringify(data),
+			headers: headers
 		}).done(function (response) {
 			//Extraindo o itemPedido do response da requisição
 			var itemPedido = response.itemPedido;
@@ -56,8 +63,6 @@ class Carrinho {
 			//removendo o elemento do itemPedido caso esteja com a quantidade zerada
 			if (itemPedido.quantidade == 0)
 				linhaDoItem.remove();
-
-			debugger;
 		});
 	}
 }

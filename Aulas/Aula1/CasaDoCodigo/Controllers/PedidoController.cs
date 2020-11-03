@@ -65,6 +65,9 @@ namespace CasaDoCodigo.Controllers
         }
 
         [HttpPost]
+        //Validando token contra ataques maliciosos utilizando token do cliente
+        [ValidateAntiForgeryToken]
+
         public UpdateQuantidadeResponse UpdateQuantidade([FromBody] ItemPedido itemPedido)
         {
             return pedidoRepository.UpdateQuantidade(itemPedido);
