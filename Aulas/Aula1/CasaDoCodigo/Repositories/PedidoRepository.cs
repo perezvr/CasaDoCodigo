@@ -14,6 +14,7 @@ namespace CasaDoCodigo.Repositories
         Pedido GetPedido();
         void AddItem(string codigo);
         UpdateQuantidadeResponse UpdateQuantidade(ItemPedido itemPedido);
+        Pedido UpdateCadastro(Cadastro cadastro);
     }
 
     public class PedidoRepository : BaseRepository<Pedido>, IPedidoRepository
@@ -23,15 +24,18 @@ namespace CasaDoCodigo.Repositories
          * **/
         private readonly IHttpContextAccessor contextAccessor;
         private readonly IItemPedidoRepository itemPedidoRepository;
+        private readonly ICadastroRepository cadastroRepository;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="contexto"></param>
         /// <param name="contextAccessor">Está registrado automaticamente e está sendo passado por injeção de dependência</param>
-        public PedidoRepository(ApplicationContext contexto, IHttpContextAccessor contextAccessor, IItemPedidoRepository itemPedidoRepository) : base(contexto)
+        public PedidoRepository(ApplicationContext contexto, IHttpContextAccessor contextAccessor, IItemPedidoRepository itemPedidoRepository, ICadastroRepository cadastroRepository) : base(contexto)
         {
             this.contextAccessor = contextAccessor;
             this.itemPedidoRepository = itemPedidoRepository;
+            this.cadastroRepository = cadastroRepository;
 
         }
 
@@ -67,7 +71,8 @@ namespace CasaDoCodigo.Repositories
 
             var pedido = dbSet
                 .Include(p => p.Itens)
-                .ThenInclude(i => i.Produto)
+                    .ThenInclude(i => i.Produto)
+                .Include(p => p.Cadastro)
                 .Where(p => p.Id.Equals(pedidoId))
                 .SingleOrDefault();
 
@@ -99,6 +104,10 @@ namespace CasaDoCodigo.Repositories
             if (itemPedidoDB != null)
             {
                 itemPedidoDB.AtualizaQuantidade(itemPedido.Quantidade);
+
+                if (itemPedido.Quantidade.Equals(0))
+                    itemPedidoRepository.RemoveItemPedido(itemPedido.Id);
+
                 contexto.SaveChanges();
 
                 CarrinhoViewModel carrinhoViewModel = new CarrinhoViewModel(GetPedido().Itens);
@@ -107,6 +116,13 @@ namespace CasaDoCodigo.Repositories
             }
 
             throw new ArgumentException("ItemPedido não encontrado");
+        }
+
+        public Pedido UpdateCadastro(Cadastro cadastro)
+        {
+            var pedido = GetPedido();
+            cadastroRepository.Update(pedido.Cadastro.Id, cadastro);
+            return pedido;
         }
     }
 }
