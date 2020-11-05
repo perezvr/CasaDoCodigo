@@ -18,7 +18,7 @@ namespace CasaDoCodigo.Models
         public string Email { get; set; } = "";
         [Required(ErrorMessage = "Telefone é obrigatório")]
         public string Telefone { get; set; } = "";
-        [Required(ErrorMessage = "Endereco é obrigatório")]
+        [Required(ErrorMessage = "Endereço é obrigatório")]
         public string Endereco { get; set; } = "";
 
         internal void Update(Cadastro novoCadastro)
